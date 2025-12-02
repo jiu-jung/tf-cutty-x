@@ -51,6 +51,81 @@ module "faas_sg" {
   tags = var.tags
 }
 
+module "k3s_control_plane_sg" {
+  source = "./modules/sg"
+
+  vpc_id      = module.vpc.vpc_id
+  sg_name     = "${var.project_name}-${var.environment}-k3s-control-sg"
+  description = "Security group for K3s control plane"
+
+  ingress_rules = [
+    {
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "Allow SSH from anywhere"
+    },
+    {
+      from_port   = 6443
+      to_port     = 6443
+      protocol    = "tcp"
+      cidr_blocks = [var.vpc_cidr]
+      description = "Allow K3s API server from VPC"
+    },
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = [var.vpc_cidr]
+      description = "Allow HTTP from VPC"
+    },
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = [var.vpc_cidr]
+      description = "Allow HTTPS from VPC"
+    }
+  ]
+
+  tags = var.tags
+}
+
+module "k3s_worker_sg" {
+  source = "./modules/sg"
+
+  vpc_id      = module.vpc.vpc_id
+  sg_name     = "${var.project_name}-${var.environment}-k3s-worker-sg"
+  description = "Security group for K3s worker nodes"
+
+  ingress_rules = [
+    {
+      from_port   = 10250
+      to_port     = 10250
+      protocol    = "tcp"
+      cidr_blocks = [var.vpc_cidr]
+      description = "Allow kubelet API from VPC"
+    },
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      cidr_blocks = [var.vpc_cidr]
+      description = "Allow HTTP from VPC"
+    },
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = [var.vpc_cidr]
+      description = "Allow HTTPS from VPC"
+    }
+  ]
+
+  tags = var.tags
+}
+
 # ============================================
 # S3 Buckets
 # ============================================
@@ -128,23 +203,15 @@ module "dynamodb_functions" {
 
   table_name   = "${var.project_name}-${var.environment}-${var.dynamodb_function_table}"
   billing_mode = var.dynamodb_billing_mode
-  hash_key     = "function_id"
-  range_key    = "version"
+  hash_key     = "user_id"
+  range_key    = "function_id"
 
   attributes = [
-    { name = "function_id", type = "S" },
-    { name = "version", type = "N" },
-    { name = "user_id", type = "S" }
+    { name = "user_id", type = "S" },
+    { name = "function_id", type = "S" }
   ]
 
-  global_secondary_indexes = [
-    {
-      name            = "UserIdIndex"
-      hash_key        = "user_id"
-      range_key       = "function_id"
-      projection_type = "ALL"
-    }
-  ]
+  global_secondary_indexes = []
 
   tags = var.tags
 }
@@ -155,22 +222,15 @@ module "dynamodb_executions" {
 
   table_name   = "${var.project_name}-${var.environment}-${var.dynamodb_execution_table}"
   billing_mode = var.dynamodb_billing_mode
-  hash_key     = "execution_id"
+  hash_key     = "function_id"
+  range_key    = "execution_id"
 
   attributes = [
-    { name = "execution_id", type = "S" },
     { name = "function_id", type = "S" },
-    { name = "timestamp", type = "N" }
+    { name = "execution_id", type = "S" }
   ]
 
-  global_secondary_indexes = [
-    {
-      name            = "FunctionIdTimestampIndex"
-      hash_key        = "function_id"
-      range_key       = "timestamp"
-      projection_type = "ALL"
-    }
-  ]
+  global_secondary_indexes = []
 
   ttl_enabled        = true
   ttl_attribute_name = "ttl"
@@ -184,18 +244,11 @@ module "dynamodb_workspaces" {
 
   table_name   = "${var.project_name}-${var.environment}-${var.dynamodb_workspaces_table}"
   billing_mode = var.dynamodb_billing_mode
-  hash_key     = "execution_id"
-  range_key    = "timestamp"
+  hash_key     = "userId"
 
   attributes = [
-    { name = "execution_id", type = "S" },
-    { name = "timestamp", type = "N" }
+    { name = "userId", type = "S" }
   ]
-
-  ttl_enabled        = true
-  ttl_attribute_name = "ttl"
-  stream_enabled     = true
-  stream_view_type   = "NEW_AND_OLD_IMAGES"
 
   tags = var.tags
 }
@@ -398,7 +451,7 @@ module "k3s_control_plane" {
   environment           = var.environment
   vpc_id                = module.vpc.vpc_id
   subnet_id             = module.vpc.public_subnet_id
-  security_group_ids    = [module.faas_sg.security_group_id]
+  security_group_ids    = [module.k3s_control_plane_sg.security_group_id]
   instance_type         = var.compute_instance_type
   iam_instance_profile  = module.iam.ec2_instance_profile_name
   key_name              = var.ec2_key_name
@@ -419,7 +472,7 @@ module "k3s_worker" {
   environment           = var.environment
   vpc_id                = module.vpc.vpc_id
   subnet_ids            = [module.vpc.private_subnet_id]
-  security_group_ids    = [module.faas_sg.security_group_id]
+  security_group_ids    = [module.k3s_worker_sg.security_group_id]
   instance_type         = var.worker_instance_type
   iam_instance_profile  = module.iam.ec2_instance_profile_name
   desired_capacity      = var.worker_desired_capacity
