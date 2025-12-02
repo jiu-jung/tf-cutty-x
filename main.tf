@@ -321,6 +321,18 @@ module "ssm" {
       type        = "String"
       description = "DynamoDB executions table name"
     }
+    k3s_cluster_token = {
+      name        = "/k3s/cluster-token"
+      value       = "placeholder"
+      type        = "SecureString"
+      description = "K3s cluster join token (updated by control plane)"
+    }
+    k3s_cluster_status = {
+      name        = "/k3s/cluster-status"
+      value       = "initializing"
+      type        = "String"
+      description = "K3s cluster initialization status"
+    }
   }
 
   tags = var.tags
