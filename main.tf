@@ -425,6 +425,7 @@ module "amplify" {
   service_role_arn = module.iam.amplify_service_role_arn
   compute_role_arn = module.iam.amplify_ssr_role_arn
   platform       = "WEB_COMPUTE"
+  framework      = "Next.js - SSR"
 
   environment_variables = {
     NEXT_PUBLIC_AWS_REGION        = var.aws_region

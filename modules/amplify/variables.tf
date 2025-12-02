@@ -24,6 +24,11 @@ variable "platform" {
   type        = string
 }
 
+variable "framework" {
+  description = "Amplify Framework"
+  type       = string
+}
+
 variable "branch_name" {
   description = "Git branch name"
   type        = string

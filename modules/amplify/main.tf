@@ -58,6 +58,7 @@ resource "aws_amplify_branch" "master" {
 
   app_id      = aws_amplify_app.main[0].id
   branch_name = var.branch_name
+  framework = var.framework
 
   enable_auto_build = true
 
@@ -69,6 +70,7 @@ resource "aws_amplify_branch" "develop" {
 
   app_id      = aws_amplify_app.main[0].id
   branch_name = var.dev_branch_name
+  framework = var.framework
 
   enable_auto_build = true
 
