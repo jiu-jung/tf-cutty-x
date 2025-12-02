@@ -1,4 +1,12 @@
 terraform {
+
+  cloud {
+    organization = "softbank-hackathon-2025-team-green"
+    workspaces {
+      name = "infra"
+    }
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -8,23 +16,10 @@ terraform {
 }
 
 provider "aws" {
-  region                   = "ap-northeast-2"
-  shared_credentials_files = ["~/.aws/credentials"]
-  profile                  = "default"
-}
-
-data "aws_ami" "al2023" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-*-x86_64"]
-  }
+  region = "ap-northeast-2"
 }
 
 data "aws_caller_identity" "current" {}
-
 
 module "ssm" {
   source     = "./modules/ssm"
@@ -39,13 +34,28 @@ module "network" {
   az                  = "ap-northeast-2a"
 }
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 module "k3s_control_plane" {
   source = "./modules/k3s-control-plane"
 
   subnet_id            = module.network.private_subnet_id
   security_group_id    = module.network.security_group_id
   instance_type        = "t3.micro"
-  ami_id               = data.aws_ami.al2023.id
+  ami_id               = data.aws_ami.ubuntu.id
   iam_instance_profile = module.ssm.instance_profile_name
 }
 
@@ -54,7 +64,7 @@ module "k3s_worker_asg" {
 
   private_subnet_id    = module.network.private_subnet_id
   security_group_id    = module.network.security_group_id
-  ami_id               = data.aws_ami.al2023.id
+  ami_id               = data.aws_ami.ubuntu.id
   instance_type        = "t3.micro"
   desired_capacity     = 1
   min_size             = 1
@@ -62,4 +72,7 @@ module "k3s_worker_asg" {
   iam_instance_profile = module.ssm.instance_profile_name
   server_private_ip    = module.k3s_control_plane.control_plane_private_ip
 
+  depends_on = [
+    module.k3s_control_plane
+  ]
 }
