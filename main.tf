@@ -203,12 +203,12 @@ module "dynamodb_functions" {
 
   table_name   = "${var.project_name}-${var.environment}-${var.dynamodb_function_table}"
   billing_mode = var.dynamodb_billing_mode
-  hash_key     = "user_id"
-  range_key    = "function_id"
+  hash_key     = "userId"
+  range_key    = "functionId"
 
   attributes = [
-    { name = "user_id", type = "S" },
-    { name = "function_id", type = "S" }
+    { name = "userId", type = "S" },
+    { name = "functionId", type = "S" }
   ]
 
   global_secondary_indexes = []
@@ -222,12 +222,12 @@ module "dynamodb_executions" {
 
   table_name   = "${var.project_name}-${var.environment}-${var.dynamodb_execution_table}"
   billing_mode = var.dynamodb_billing_mode
-  hash_key     = "function_id"
-  range_key    = "execution_id"
+  hash_key     = "functionId"
+  range_key    = "executionId"
 
   attributes = [
-    { name = "function_id", type = "S" },
-    { name = "execution_id", type = "S" }
+    { name = "functionId", type = "S" },
+    { name = "executionId", type = "S" }
   ]
 
   global_secondary_indexes = []
