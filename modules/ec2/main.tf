@@ -54,11 +54,4 @@ resource "aws_instance" "main" {
       Role = "faas-compute"
     }
   )
-
-  lifecycle {
-    ignore_changes = [
-      ami,
-      user_data
-    ]
-  }
 }
