@@ -358,6 +358,12 @@ module "ssm" {
       type        = "String"
       description = "K3s cluster initialization status"
     }
+    k3s_control_plane_ip = {
+      name        = "/k3s/control-plane-ip"
+      value       = "placeholder"
+      type        = "String"
+      description = "K3s control plane private IP (updated by control plane)"
+    }
   }
 
   tags = var.tags

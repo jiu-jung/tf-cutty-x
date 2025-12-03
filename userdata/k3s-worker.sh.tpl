@@ -30,8 +30,12 @@ while true; do
 done
 
 
-SERVER_IP="${server_private_ip}"
-SERVER_URL="https://$SERVER_IP:6443"
+SERVER_IP=$(aws ssm get-parameter \
+  --region "ap-northeast-2" \
+  --name "/k3s/control-plane-ip" \
+  --query "Parameter.Value" \
+  --output text)
+SERVER_URL="https://${SERVER_IP}:6443"
 
 TOKEN=$(aws ssm get-parameter \
   --region "ap-northeast-2" \
