@@ -66,26 +66,12 @@ module "k3s_control_plane_sg" {
       cidr_blocks = ["0.0.0.0/0"]
       description = "Allow SSH from anywhere"
     },
-    {
-      from_port   = 6443
-      to_port     = 6443
-      protocol    = "tcp"
+     {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
       cidr_blocks = [var.vpc_cidr]
-      description = "Allow K3s API server from VPC"
-    },
-    {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = [var.vpc_cidr]
-      description = "Allow HTTP from VPC"
-    },
-    {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = [var.vpc_cidr]
-      description = "Allow HTTPS from VPC"
+      description = "Allow all traffic from within the VPC"
     }
   ]
 
@@ -100,26 +86,12 @@ module "k3s_worker_sg" {
   description = "Security group for K3s worker nodes"
 
   ingress_rules = [
-    {
-      from_port   = 10250
-      to_port     = 10250
-      protocol    = "tcp"
+     {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
       cidr_blocks = [var.vpc_cidr]
-      description = "Allow kubelet API from VPC"
-    },
-    {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      cidr_blocks = [var.vpc_cidr]
-      description = "Allow HTTP from VPC"
-    },
-    {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = [var.vpc_cidr]
-      description = "Allow HTTPS from VPC"
+      description = "Allow all traffic from within the VPC"
     }
   ]
 
