@@ -23,6 +23,11 @@ output "amplify_ssr_role_arn" {
   value       = aws_iam_role.amplify_ssr.arn
 }
 
+output "amplify_ssr_policy_arn" {
+  description = "ARN of the Amplify SSR policy"
+  value       = aws_iam_policy.amplify_ssr.arn
+}
+
 output "amplify_service_role_arn" {
   description = "ARN of the Amplify service role"
   value       = aws_iam_role.amplify_service.arn

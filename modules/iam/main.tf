@@ -274,36 +274,11 @@ resource "aws_iam_instance_profile" "ec2_ssm" {
 }
 
 # ============================================
-# IAM Role for Amplify SSR Computing
+# Customer Managed Policy for Amplify SSR
 # ============================================
-resource "aws_iam_role" "amplify_ssr" {
-  name = "${var.project_name}-${var.environment}-amplify-ssr-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid    = "Statement1"
-        Effect = "Allow"
-        Principal = {
-          Service = ["amplify.amazonaws.com"]
-        }
-        Action = "sts:AssumeRole"
-      }
-    ]
-  })
-
-  tags = merge(
-    var.tags,
-    {
-      Name = "${var.project_name}-${var.environment}-amplify-ssr-role"
-    }
-  )
-}
-
-resource "aws_iam_role_policy" "amplify_ssr" {
-  name = "${var.project_name}-${var.environment}-amplify-ssr-policy"
-  role = aws_iam_role.amplify_ssr.id
+resource "aws_iam_policy" "amplify_ssr" {
+  name        = "${var.project_name}-${var.environment}-amplify-ssr-policy"
+  description = "Policy for Amplify SSR computing resources access"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -342,6 +317,47 @@ resource "aws_iam_role_policy" "amplify_ssr" {
       }
     ]
   })
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-amplify-ssr-policy"
+    }
+  )
+}
+
+# ============================================
+# IAM Role for Amplify SSR Computing
+# ============================================
+resource "aws_iam_role" "amplify_ssr" {
+  name = "${var.project_name}-${var.environment}-amplify-ssr-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "Statement1"
+        Effect = "Allow"
+        Principal = {
+          Service = ["amplify.amazonaws.com"]
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.project_name}-${var.environment}-amplify-ssr-role"
+    }
+  )
+}
+
+# Attach the managed policy to the role
+resource "aws_iam_role_policy_attachment" "amplify_ssr" {
+  role       = aws_iam_role.amplify_ssr.name
+  policy_arn = aws_iam_policy.amplify_ssr.arn
 }
 
 # ============================================
