@@ -427,7 +427,7 @@ module "amplify" {
     NEXT_PUBLIC_S3_BUCKET                = module.s3_production.bucket_id
     NEXT_PUBLIC_USER_POOL_ID             = module.cognito.user_pool_id
     NEXT_PUBLIC_USER_POOL_CLIENT_ID      = module.cognito.user_pool_client_id
-    OPENAI_API_KEY                       = var.amplify_openai_api_key
+    NEXT_PUBLIC_OPENAI_API_KEY           = var.amplify_openai_api_key
   }
 
   tags = var.tags
