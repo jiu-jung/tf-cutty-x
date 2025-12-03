@@ -366,7 +366,7 @@ variable "google_client_secret" {
 variable "cognito_mfa_configuration" {
   description = "MFA configuration for Cognito (OFF, ON, OPTIONAL)"
   type        = string
-  default     = "OPTIONAL"
+  default     = "OFF"
 }
 
 variable "cognito_deletion_protection" {

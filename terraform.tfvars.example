@@ -43,7 +43,7 @@ google_client_id = ""  # Google OAuth Client ID (required if enable_google_provi
 google_client_secret = ""  # Google OAuth Client Secret (required if enable_google_provider is true)
 
 # Cognito Security Settings
-cognito_mfa_configuration = "OPTIONAL"  # Options: OFF, ON, OPTIONAL
+cognito_mfa_configuration = "OFF"  # Options: OFF, ON, OPTIONAL
 cognito_deletion_protection = false
 
 # EC2 Compute Configuration (Optional)

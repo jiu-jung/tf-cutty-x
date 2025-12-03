@@ -48,7 +48,7 @@ variable "google_client_secret" {
 variable "mfa_configuration" {
   description = "MFA configuration (OFF, ON, OPTIONAL)"
   type        = string
-  default     = "OPTIONAL"
+  default     = "OFF"
   validation {
     condition     = contains(["OFF", "ON", "OPTIONAL"], var.mfa_configuration)
     error_message = "MFA configuration must be OFF, ON, or OPTIONAL."

@@ -48,11 +48,6 @@ resource "aws_cognito_user_pool" "main" {
   # MFA configuration (optional)
   mfa_configuration = var.mfa_configuration
 
-  # User pool add-ons
-  user_pool_add_ons {
-    advanced_security_mode = "AUDIT"
-  }
-
   # Deletion protection
   deletion_protection = var.deletion_protection ? "ACTIVE" : "INACTIVE"
 
