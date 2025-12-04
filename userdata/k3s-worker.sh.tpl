@@ -58,8 +58,8 @@ ARCH=$(uname -m)
 URL="https://storage.googleapis.com/gvisor/releases/release/latest/$${ARCH}"
 
 # 2. runsc 다운로드 (curl -L -O 옵션 사용)
-curl -L -O ${URL}/runsc
-curl -L -O ${URL}/runsc.sha512
+curl -L -O $${URL}/runsc
+curl -L -O $${URL}/runsc.sha512
 
 # 3. 무결성 검증
 sha512sum -c runsc.sha512 -w
@@ -69,8 +69,8 @@ chmod a+rx runsc
 sudo mv runsc /usr/local/bin
 
 # 5. containerd-shim-runsc-v1 다운로드
-curl -L -O ${URL}/containerd-shim-runsc-v1
-curl -L -O ${URL}/containerd-shim-runsc-v1.sha512
+curl -L -O $${URL}/containerd-shim-runsc-v1
+curl -L -O $${URL}/containerd-shim-runsc-v1.sha512
 
 # 6. 무결성 검증 및 설치
 sha512sum -c containerd-shim-runsc-v1.sha512 -w
