@@ -310,6 +310,8 @@ module "iam" {
 
   ecr_repository_arn = module.ecr.repository_arn
 
+  cognito_user_pool_arn = module.cognito.user_pool_arn
+
   tags = var.tags
 }
 

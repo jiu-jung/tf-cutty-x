@@ -47,3 +47,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "cognito_user_pool_arn" {
+  description = "ARN of the Cognito User Pool (for SSR role permissions)"
+  type        = string
+  default     = ""
+}

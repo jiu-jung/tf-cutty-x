@@ -315,6 +315,19 @@ resource "aws_iam_policy" "amplify_ssr" {
           [for arn in var.dynamodb_table_arns : "${arn}/*"]
         )
       }
+      ,
+      {
+        Sid    = "CognitoAccess"
+        Effect = "Allow"
+        Action = [
+          "cognito-idp:InitiateAuth",
+          "cognito-idp:SignUp",
+          "cognito-idp:ConfirmSignUp",
+          "cognito-idp:GetUser",
+          "cognito-idp:GlobalSignOut"
+        ]
+        Resource = var.cognito_user_pool_arn
+      }
     ]
   })
 
@@ -405,15 +418,15 @@ resource "aws_iam_role_policy" "amplify_service" {
         Resource = "arn:aws:logs:${var.aws_region}:${var.account_id}:log-group:/aws/amplify/*:log-stream:*"
       },
       {
-        Sid    = "CreateLogGroup"
-        Effect = "Allow"
-        Action = "logs:CreateLogGroup"
+        Sid      = "CreateLogGroup"
+        Effect   = "Allow"
+        Action   = "logs:CreateLogGroup"
         Resource = "arn:aws:logs:${var.aws_region}:${var.account_id}:log-group:/aws/amplify/*"
       },
       {
-        Sid    = "DescribeLogGroups"
-        Effect = "Allow"
-        Action = "logs:DescribeLogGroups"
+        Sid      = "DescribeLogGroups"
+        Effect   = "Allow"
+        Action   = "logs:DescribeLogGroups"
         Resource = "arn:aws:logs:${var.aws_region}:${var.account_id}:log-group:*"
       }
     ]
