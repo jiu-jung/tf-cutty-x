@@ -197,6 +197,12 @@ variable "codebuild_timeout_minutes" {
   default     = 60
 }
 
+variable "codebuild_source_location" {
+  description = "CodeBuild source location (GitHub repo URL)"
+  type        = string
+  default     = "https://github.com/Softbank-Hackathon-2025-Team-Green/codebuild-repo"
+}
+
 # ============================================
 # Amplify Configuration
 # ============================================
