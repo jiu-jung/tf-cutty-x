@@ -22,3 +22,9 @@ output "user_pool_domain" {
   description = "Cognito User Pool Domain"
   value       = aws_cognito_user_pool_domain.main.domain
 }
+
+output "user_pool_client_secret" {
+  description = "Client secret of the Cognito User Pool Client"
+  value       = aws_cognito_user_pool_client.main.client_secret
+  sensitive   = true
+}
