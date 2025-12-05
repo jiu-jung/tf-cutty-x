@@ -1,3 +1,7 @@
+locals {
+  codebuild_project_arn = "arn:aws:codebuild:${var.aws_region}:${var.account_id}:project/${var.codebuild_project_name}"
+}
+
 # IAM Role for FaaS Function Execution
 resource "aws_iam_role" "faas_execution" {
   name = "${var.project_name}-${var.environment}-faas-execution-role"
@@ -347,7 +351,7 @@ resource "aws_iam_policy" "amplify_ssr" {
           "codebuild:BatchGetBuilds",
           "codebuild:StopBuild"
         ]
-        Resource = var.codebuild_project_arn
+        Resource = local.codebuild_project_arn
       }
       ,
       {
