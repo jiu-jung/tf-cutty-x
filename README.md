@@ -1,265 +1,211 @@
-# FaaS Platform Infrastructure
+# Infra README
 
-This Terraform project provisions a complete Function-as-a-Service (FaaS) platform on AWS with best practices.
+<details open>
+<summary>🇰🇷 한국어</summary>
 
-## Architecture Overview
+## 📜 개요
+
+이 Terraform 프로젝트는 AWS 상에 완벽한 FaaS(Function-as-a-Service) 플랫폼을 프로비저닝합니다. Terraform Cloud를 사용하여 상태를 관리하고, 모범 사례를 준수하여 설계되었습니다.
+
+## 🏗️ 아키텍처 개요
+
+인프라에는 다음이 포함됩니다:
+
+- **VPC**: 단일 AZ 배포, 퍼블릭/프라이빗 서브넷, NAT 게이트웨이, 인터넷 게이트웨이, VPC 플로우 로그
+- **Amplify**: GitHub 리포지토리와의 CI/CD를 통한 프론트엔드 호스팅
+- **Cognito**: Google OAuth 제공자를 지원하는 사용자 인증
+- **S3**: 3개의 버킷 (프로덕션 코드, 개발 코드, 예비용)
+- **CodeBuild**: 도커 이미지 빌드 및 ECR 푸시 자동화
+- **DynamoDB**: 함수 메타데이터, 실행 추적, 로그를 위한 3개의 테이블
+- **VPC 네트워킹**: 적절한 라우팅 및 DNS를 갖춘 모범 사례 설정
+- **Security Groups**: FaaS 워크로드에 맞게 적절히 구성됨
+- **SSM Parameter Store**: 중앙 집중식 구성 관리
+- **IAM**: 모든 서비스를 위한 포괄적인 역할 및 정책
+- **SQS**: 작업 및 결과 큐와 데드 레터 큐(DLQ)
+- **Network Load Balancer**: 트래픽 분산을 위한 모듈
+- **ECR**: 수명 주기 정책을 갖춘 컨테이너 레지스트리
+
+## 📋 사전 요구 사항
+
+- Terraform >= 1.5.0
+- AWS CLI 구성 완료
+- Terraform Cloud 계정 (조직: softbank-hackathon-2025-team-green)
+- GitHub 개인용 액세스 토큰 (Amplify용)
+
+## 🚀 빠른 시작
+
+1.  예제 변수 파일 복사:
+    ```bash
+    cp terraform.tfvars.example terraform.tfvars
+    ```
+2.  `terraform.tfvars`에 자신의 값으로 수정:
+
+    ```hcl
+    project_name = "your-project-name"
+    environment  = "dev"
+
+    # Amplify를 위한 GitHub 리포지토리 URL 및 토큰 추가
+    amplify_repository_url = "https://github.com/your-org/your-repo"
+    amplify_access_token = "ghp_your_token_here"
+
+    # Google OAuth로 Cognito 구성
+    enable_google_provider = true
+    google_client_id = "your-google-client-id.apps.googleusercontent.com"
+    google_client_secret = "your-google-client-secret"
+    cognito_callback_urls = ["https://your-app.com/callback"]
+    ```
+
+3.  Terraform 초기화:
+    ```bash
+    terraform init
+    ```
+4.  배포 계획:
+    ```bash
+    terraform plan
+    ```
+5.  구성 적용:
+    ```bash
+    terraform apply
+    ```
+
+</details>
+
+<details>
+<summary>🇯🇵 日本語</summary>
+
+## 📜 概要
+
+この Terraform プロジェクトは、AWS 上に完全な FaaS（Function-as-a-Service）プラットフォームをプロビジョニングします。Terraform Cloud を使用して状態を管理し、ベストプラクティスに準拠して設計されています。
+
+## 🏗️ アーキテクチャ概要
+
+インフラストラクチャには以下が含まれます：
+
+- **VPC**: 単一 AZ 展開、パブリック/プライベートサブネット、NAT ゲートウェイ、インターネットゲートウェイ、VPC フローログ
+- **Amplify**: GitHub リポジトリとの CI/CD によるフロントエンドホスティング
+- **Cognito**: Google OAuth プロバイダーをサポートするユーザー認証
+- **S3**: 3 つのバケット（本番コード用、開発コード用、予約用）
+- **CodeBuild**: Docker イメージのビルドと ECR プッシュの自動化
+- **DynamoDB**: 関数メタデータ、実行追跡、ログ用の 3 つのテーブル
+- **VPC ネットワーキング**: 適切なルーティングと DNS を備えたベストプラクティスの設定
+- **Security Groups**: FaaS ワークロードに合わせて適切に構成
+- **SSM Parameter Store**: 集中型の構成管理
+- **IAM**: すべてのサービスに対する包括的なロールとポリシー
+- **SQS**: タスクおよび結果キューとデッドレターキュー（DLQ）
+- **Network Load Balancer**: トラフィック分散用のモジュール
+- **ECR**: ライフサイクルポリシーを備えたコンテナレジストリ
+
+## 📋 前提条件
+
+- Terraform >= 1.5.0
+- AWS CLI の設定が完了していること
+- Terraform Cloud アカウント（組織：softbank-hackathon-2025-team-green）
+- GitHub 個人アクセストークン（Amplify 用）
+
+## 🚀 クイックスタート
+
+1.  サンプル変数ファイルをコピー:
+    ```bash
+    cp terraform.tfvars.example terraform.tfvars
+    ```
+2.  `terraform.tfvars`を自分の値で編集:
+
+    ```hcl
+    project_name = "your-project-name"
+    environment  = "dev"
+
+    # Amplify用のGitHubリポジトリURLとトークンを追加
+    amplify_repository_url = "https://github.com/your-org/your-repo"
+    amplify_access_token = "ghp_your_token_here"
+
+    # Google OAuthでCognitoを設定
+    enable_google_provider = true
+    google_client_id = "your-google-client-id.apps.googleusercontent.com"
+    google_client_secret = "your-google-client-secret"
+    cognito_callback_urls = ["https://your-app.com/callback"]
+    ```
+
+3.  Terraform の初期化:
+    ```bash
+    terraform init
+    ```
+4.  デプロイ計画:
+    ```bash
+    terraform plan
+    ```
+5.  構成の適用:
+    ```bash
+    terraform apply
+    ```
+
+</details>
+
+<details>
+<summary>🇬🇧 English</summary>
+
+## 📜 Overview
+
+This Terraform project provisions a complete Function-as-a-Service (FaaS) platform on AWS. It is designed with best practices and uses Terraform Cloud for state management.
+
+## 🏗️ Architecture Overview
 
 The infrastructure includes:
 
 - **VPC**: Single AZ deployment with public/private subnets, NAT Gateway, Internet Gateway, and VPC Flow Logs
-- **Amplify**: Frontend hosting with CI/CD from GitHub repository
-- **Cognito**: User authentication with Google OAuth provider support
-- **S3**: Three buckets (production code, development code, and reserved)
-- **CodeBuild**: Docker image building and ECR push automation
+- **Amplify**: Frontend hosting with CI/CD from a GitHub repository
+- **Cognito**: User authentication with support for Google OAuth provider
+- **S3**: Three buckets (for production code, development code, and reserved use)
+- **CodeBuild**: Automation for Docker image building and pushing to ECR
 - **DynamoDB**: Three tables for function metadata, execution tracking, and logs
-- **VPC Networking**: Best practice setup with proper routing and DNS
-- **Security Groups**: Properly configured for FaaS workloads
+- **VPC Networking**: Best-practice setup with proper routing and DNS
+- **Security Groups**: Appropriately configured for FaaS workloads
 - **SSM Parameter Store**: Centralized configuration management
 - **IAM**: Comprehensive roles and policies for all services
-- **SQS**: Task and result queues with dead letter queues
+- **SQS**: Task and result queues with Dead Letter Queues (DLQs)
 - **Network Load Balancer**: Module for traffic distribution
 - **ECR**: Container registry with lifecycle policies
 
-## Prerequisites
+## 📋 Prerequisites
 
 - Terraform >= 1.5.0
 - AWS CLI configured
 - Terraform Cloud account (organization: softbank-hackathon-2025-team-green)
-- GitHub personal access token (for Amplify)
+- GitHub Personal Access Token (for Amplify)
 
-## Quick Start
+## 🚀 Quick Start
 
-1. Copy the example variables file:
+1.  Copy the example variables file:
+    ```bash
+    cp terraform.tfvars.example terraform.tfvars
+    ```
+2.  Edit `terraform.tfvars` with your values:
 
-   ```bash
-   cp terraform.tfvars.example terraform.tfvars
-   ```
+    ```hcl
+    project_name = "your-project-name"
+    environment  = "dev"
 
-2. Edit `terraform.tfvars` with your values:
+    # Add GitHub repository URL and token for Amplify
+    amplify_repository_url = "https://github.com/your-org/your-repo"
+    amplify_access_token = "ghp_your_token_here"
 
-   ```hcl
-   project_name = "your-project-name"
-   environment  = "dev"
+    # Configure Cognito with Google OAuth
+    enable_google_provider = true
+    google_client_id = "your-google-client-id.apps.googleusercontent.com"
+    google_client_secret = "your-google-client-secret"
+    cognito_callback_urls = ["https://your-app.com/callback"]
+    ```
 
-   # Add GitHub repository URL and token for Amplify
-   amplify_repository_url = "https://github.com/your-org/your-repo"
-   amplify_access_token = "ghp_your_token_here"
+3.  Initialize Terraform:
+    ```bash
+    terraform init
+    ```
+4.  Plan the deployment:
+    ```bash
+    terraform plan
+    ```
+5.  Apply the configuration:
+    ```bash
+    terraform apply
+    ```
 
-   # Configure Cognito with Google OAuth
-   enable_google_provider = true
-   google_client_id = "your-google-client-id.apps.googleusercontent.com"
-   google_client_secret = "your-google-client-secret"
-   cognito_callback_urls = ["https://your-app.com/callback"]
-   ```
-
-3. Initialize Terraform:
-
-   ```bash
-   terraform init
-   ```
-
-4. Plan the deployment:
-
-   ```bash
-   terraform plan
-   ```
-
-5. Apply the configuration:
-   ```bash
-   terraform apply
-   ```
-
-## Module Structure
-
-````
-infra/
-├── main.tf                 # Main configuration with all module calls
-├── variables.tf            # All input variables with validation
-├── outputs.tf              # All outputs from modules
-├── provider.tf             # Provider and backend configuration
-├── terraform.tfvars.example # Example variables file
-└── modules/
-    ├── vpc/                # VPC with single AZ
-    ├── sg/                 # Security Groups
-    ├── s3/                 # S3 Buckets (3 buckets)
-    ├── dynamodb/           # DynamoDB Tables (3 tables)
-    ├── sqs/                # SQS Queues with DLQs
-    ├── ecr/                # Elastic Container Registry
-    ├── iam/                # IAM Roles and Policies
-    ├── ssm/                # Systems Manager Parameter Store
-    ├── codebuild/          # CodeBuild Projects
-    ├── amplify/            # AWS Amplify
-    ├── cognito/            # Cognito User Pool & Identity Pool
-    └── nlb/                # Network Load Balancer
-
-## Resource Naming Convention
-
-All resources follow the naming pattern: `{project_name}-{environment}-{resource_type}`
-
-Example: `faas-platform-dev-vpc`
-
-## DynamoDB Tables
-
-### 1. Functions Table
-- **Purpose**: Store function metadata
-- **Hash Key**: function_id
-- **Range Key**: version
-- **GSI**: UserIdIndex (user_id, function_id)
-
-### 2. Executions Table
-- **Purpose**: Track function executions
-- **Hash Key**: execution_id
-- **GSI**: FunctionIdTimestampIndex (function_id, timestamp)
-- **Features**: TTL enabled
-
-### 3. Logs Table
-- **Purpose**: Store execution logs
-- **Hash Key**: execution_id
-- **Range Key**: timestamp
-- **Features**: TTL enabled, DynamoDB Streams enabled
-
-## S3 Buckets
-
-1. **Production Bucket**: For production function code
-2. **Development Bucket**: For development/testing code
-3. **Reserved Bucket**: Reserved for future use
-
-All buckets have:
-- Versioning enabled
-- Server-side encryption (AES256)
-- Public access blocked
-- Lifecycle policies (transition to Glacier after 90 days)
-
-## Cognito Authentication
-
-### User Pool
-- Email-based authentication
-- Password policy with strong requirements
-- Email verification
-- MFA support (configurable: OFF, ON, OPTIONAL)
-- Advanced security mode (AUDIT)
-
-### Google OAuth Integration
-To enable Google authentication:
-
-1. **Create Google OAuth 2.0 credentials** at [Google Cloud Console](https://console.cloud.google.com/):
-   - Create OAuth 2.0 Client ID for Web application
-   - Add authorized redirect URI: `https://{cognito-domain}.auth.{region}.amazoncognito.com/oauth2/idpresponse`
-
-2. **Configure in terraform.tfvars**:
-   ```hcl
-   enable_google_provider = true
-   google_client_id = "your-client-id.apps.googleusercontent.com"
-   google_client_secret = "your-client-secret"
-   cognito_callback_urls = ["https://your-app.com/callback"]
-   cognito_logout_urls = ["https://your-app.com/logout"]
-   ```
-
-3. **Integration**: Cognito credentials are automatically exported to Amplify environment variables:
-   - `NEXT_PUBLIC_USER_POOL_ID`
-   - `NEXT_PUBLIC_USER_POOL_CLIENT_ID`
-   - `NEXT_PUBLIC_IDENTITY_POOL_ID`
-
-See [modules/cognito/README.md](./modules/cognito/README.md) for detailed documentation.
-
-## SQS Queues
-
-1. **Task Queue**: For incoming function execution requests
-2. **Result Queue**: For function execution results
-3. **Dead Letter Queues**: For both task and result queues (max 3 retries)
-
-## Security Features
-
-- VPC Flow Logs enabled
-- All S3 buckets encrypted and private
-- DynamoDB encryption at rest
-- ECR image scanning on push
-- IMDSv2 required (if using EC2)
-- Security groups with minimal required access
-- IAM roles following least privilege principle
-
-## Outputs
-
-The configuration outputs important information including:
-- VPC and subnet IDs
-- S3 bucket names
-- DynamoDB table names
-- SQS queue URLs
-- ECR repository URL
-- IAM role ARNs
-- NLB DNS name
-- Amplify app domain
-- Cognito User Pool ID, Client ID, and Identity Pool ID
-- Cognito Hosted UI URL
-
-## Cost Optimization
-
-- DynamoDB: PAY_PER_REQUEST billing mode
-- NAT Gateway: Can be disabled for dev environments
-- VPC Flow Logs: 7-day retention
-- ECR: Lifecycle policy keeps only last 10 images
-- S3: Lifecycle transitions to cheaper storage classes
-
-## Customization
-
-Key variables you can customize:
-
-- `vpc_cidr`: VPC CIDR block
-- `availability_zone`: Single AZ for all resources
-- `enable_nat_gateway`: Enable/disable NAT Gateway
-- `enable_vpc_flow_logs`: Enable/disable VPC Flow Logs
-- `dynamodb_billing_mode`: DynamoDB billing mode
-- `ecr_lifecycle_max_image_count`: Max ECR images to retain
-
-## Troubleshooting
-
-### Terraform Initialization Issues
-```bash
-terraform init -upgrade
-````
-
-### Module Not Found
-
-Ensure all module directories exist with main.tf, variables.tf, and outputs.tf
-
-### Authentication Errors
-
-```bash
-aws configure
-# Or use environment variables
-export AWS_ACCESS_KEY_ID="your-key"
-export AWS_SECRET_ACCESS_KEY="your-secret"
-```
-
-## Best Practices Implemented
-
-✅ Single AZ deployment for cost optimization  
-✅ VPC with public/private subnet architecture  
-✅ NAT Gateway for private subnet internet access  
-✅ VPC Flow Logs for network monitoring  
-✅ All resources tagged consistently  
-✅ DNS resolution enabled in VPC  
-✅ S3 versioning and lifecycle policies  
-✅ DynamoDB encryption and point-in-time recovery  
-✅ SQS dead letter queues  
-✅ ECR image scanning and lifecycle policies  
-✅ IAM roles with least privilege  
-✅ Security groups with specific rules  
-✅ SSM Parameter Store for configuration  
-✅ CloudWatch Logs integration
-
-## Contributing
-
-1. Make changes in a feature branch
-2. Run `terraform fmt` to format code
-3. Run `terraform validate` to validate syntax
-4. Test in dev environment first
-5. Create pull request for review
-
-## License
-
-Managed by: Softbank Hackathon 2025 Team Green
-
-## Support
-
-For issues or questions, contact the infrastructure team.
+</details>
