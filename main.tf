@@ -2,6 +2,10 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+locals {
+  codebuild_project_name = "${var.project_name}-${var.environment}-build"
+}
+
 # ============================================
 # VPC Module
 # ============================================
@@ -311,8 +315,9 @@ module "iam" {
   ecr_repository_arn = module.ecr.repository_arn
 
   cognito_user_pool_arn = module.cognito.user_pool_arn
-  codebuild_project_arn = module.codebuild.project_arn
-  sqs_queue_arn         = module.sqs_task.queue_arn
+  # codebuild_project_arn = module.codebuild.project_arn
+  codebuild_project_name = local.codebuild_project_name
+  sqs_queue_arn          = module.sqs_task.queue_arn
 
   tags = var.tags
 }
@@ -391,6 +396,7 @@ module "codebuild" {
   compute_type              = var.codebuild_compute_type
   image                     = var.codebuild_image
   timeout_minutes           = var.codebuild_timeout_minutes
+  amplify_domain            = module.amplify.default_domain
 
   tags = var.tags
 }
@@ -418,6 +424,9 @@ module "cognito" {
 # ============================================
 # Amplify (Conditional)
 # ============================================
+
+
+
 module "amplify" {
   source = "./modules/amplify"
 
@@ -446,7 +455,8 @@ module "amplify" {
     NEXT_PUBLIC_REDIRECT_SIGN_IN                = var.cognito_callback_urls[0]
     NEXT_PUBLIC_REDIRECT_SIGN_OUT               = var.cognito_logout_urls[0]
     NEXT_PUBLIC_COGNITO_USER_POOL_CLIENT_SECRET = module.cognito.user_pool_client_secret
-    NEXT_PUBLIC_CODEBUILD_PROJECT_NAME          = module.codebuild.project_name
+    # NEXT_PUBLIC_CODEBUILD_PROJECT_NAME          = module.codebuild.project_name
+    NEXT_PUBLIC_CODEBUILD_PROJECT_NAME = local.codebuild_project_name
 
   }
 

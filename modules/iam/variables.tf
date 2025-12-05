@@ -54,10 +54,15 @@ variable "cognito_user_pool_arn" {
   default     = ""
 }
 
-variable "codebuild_project_arn" {
-  description = "ARN of the CodeBuild project (for SSR role permissions)"
+# variable "codebuild_project_arn" {
+#   description = "ARN of the CodeBuild project (for SSR role permissions)"
+#   type        = string
+#   default     = ""
+# }
+
+variable "codebuild_project_name" {
+  description = "CodeBuild project name (used to construct ARN)"
   type        = string
-  default     = ""
 }
 
 variable "sqs_queue_arn" {
