@@ -51,3 +51,22 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# Multi-AZ
+variable "additional_availability_zones" {
+  description = "Extra AZs to create additional public/private subnets in"
+  type        = list(string)
+  default     = []
+}
+
+variable "additional_public_subnet_cidrs" {
+  description = "CIDR blocks for additional public subnets (one per extra AZ)"
+  type        = list(string)
+  default     = []
+}
+
+variable "additional_private_subnet_cidrs" {
+  description = "CIDR blocks for additional private subnets (one per extra AZ)"
+  type        = list(string)
+  default     = []
+}

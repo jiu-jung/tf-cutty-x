@@ -27,3 +27,20 @@ output "internet_gateway_id" {
   description = "ID of the Internet Gateway"
   value       = aws_internet_gateway.main.id
 }
+
+# multi-az
+output "public_subnet_ids" {
+  description = "IDs of all public subnets (base + additional)"
+  value = concat(
+    [aws_subnet.public.id],
+    [for s in aws_subnet.public_additional : s.id]
+  )
+}
+
+output "private_subnet_ids" {
+  description = "IDs of all private subnets (base + additional)"
+  value = concat(
+    [aws_subnet.private.id],
+    [for s in aws_subnet.private_additional : s.id]
+  )
+}
