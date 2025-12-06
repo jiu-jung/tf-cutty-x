@@ -48,7 +48,7 @@ resource "aws_codebuild_project" "main" {
 
     environment_variable {
       name  = "AMPLIFY_DEPLOY_FAILED_URL"
-      value = "https://${var.amplify_domain}/api/deploy/failed"
+      value = "https://develop.${var.amplify_domain}/api/deploy/failed"
     }
 
 
