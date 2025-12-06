@@ -275,6 +275,12 @@ variable "amplify_slack_webhook"{
   default     = ""
 }
 
+variable "amplify_function_call_baseurl" {
+  description = "Base URL for function calls from Amplify"
+  type        = string
+  default     = ""
+}
+
 # ============================================
 # EC2 Compute Configuration
 # ============================================
