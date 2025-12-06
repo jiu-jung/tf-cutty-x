@@ -29,19 +29,19 @@ output "internet_gateway_id" {
 }
 
 # multi-az
+
 output "public_subnet_ids" {
-  description = "List of public subnet IDs (primary + optional additional)"
-  value = compact([
+  description = "List of public subnet IDs (AZ1 + AZ2 optional)"
+  value = tolist(sort(compact([
     aws_subnet.public.id,
     length(aws_subnet.public_additional) > 0 ? aws_subnet.public_additional[0].id : null
-  ])
+  ])))
 }
 
-
 output "private_subnet_ids" {
-  description = "List of private subnet IDs (primary + optional additional)"
-  value = compact([
+  description = "List of private subnet IDs (AZ1 + AZ2 optional)"
+  value = tolist(sort(compact([
     aws_subnet.private.id,
     length(aws_subnet.private_additional) > 0 ? aws_subnet.private_additional[0].id : null
-  ])
+  ])))
 }
