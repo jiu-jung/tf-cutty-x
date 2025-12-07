@@ -301,6 +301,7 @@ resource "aws_iam_policy" "amplify_ssr" {
         Sid    = "S3Access"
         Effect = "Allow"
         Action = [
+          "s3:GetBucketLocation",
           "s3:GetObject",
           "s3:PutObject",
           "s3:DeleteObject",
@@ -376,10 +377,23 @@ resource "aws_iam_policy" "amplify_ssr" {
         Action = [
           "athena:StartQueryExecution",
           "athena:GetQueryExecution",
-          "athena:GetQueryResults"
+          "athena:GetQueryResults",
+          "athena:StopQueryExecution",
+          "athena:GetWorkGroup"
         ]
         Resource = "*"
-      }
+      },
+    {
+      Sid    = "GlueAccess"
+      Effect = "Allow",
+      Action = [
+        "glue:GetDatabase",
+        "glue:GetTable",
+        "glue:GetPartitions"
+      ],
+      Resource = "*"
+    }
+      
     ]
   })
 
