@@ -293,6 +293,12 @@ variable "athena_output_location" {
   default     = ""
 }
 
+variable "log_bucket_arn" {
+  description = "ARN of the S3 log bucket"
+  type        = string
+  default     = ""
+}
+
 # ============================================
 # EC2 Compute Configuration
 # ============================================

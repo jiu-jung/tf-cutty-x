@@ -69,3 +69,9 @@ variable "sqs_queue_arn" {
   description = "ARN of the SQS queue for sending messages"
   type        = string
 }
+
+variable "log_bucket_arn" {
+  description = "ARN of the S3 log bucket"
+  type        = string
+  default     = ""
+}

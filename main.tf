@@ -322,6 +322,7 @@ module "iam" {
   # codebuild_project_arn = module.codebuild.project_arn
   codebuild_project_name = local.codebuild_project_name
   sqs_queue_arn          = module.sqs_task.queue_arn
+  log_bucket_arn = var.log_bucket_arn
 
   tags = var.tags
 }

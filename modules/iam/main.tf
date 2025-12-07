@@ -308,7 +308,8 @@ resource "aws_iam_policy" "amplify_ssr" {
         ]
         Resource = concat(
           var.s3_bucket_arns,
-          [for arn in var.s3_bucket_arns : "${arn}/*"]
+          [for arn in var.s3_bucket_arns : "${arn}/*"],
+          var.log_bucket_arn != "" ? [var.log_bucket_arn, "${var.log_bucket_arn}/*"] : []
         )
       },
       {
