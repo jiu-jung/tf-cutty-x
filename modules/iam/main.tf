@@ -368,6 +368,17 @@ resource "aws_iam_policy" "amplify_ssr" {
           "arn:aws:logs:${var.aws_region}:${var.account_id}:log-group:/aws/codebuild/*"
         ]
       }
+      ,
+      {
+        Sid    = "AthenaAccess"
+        Effect = "Allow"
+        Action = [
+          "athena:StartQueryExecution",
+          "athena:GetQueryExecution",
+          "athena:GetQueryResults"
+        ]
+        Resource = "*"
+      }
     ]
   })
 
